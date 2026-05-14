@@ -6,7 +6,7 @@ const stickyCta = document.getElementById('stickyCta');
 const lightbox = document.getElementById('lightbox');
 const lightboxImg = document.getElementById('lightbox-img');
 const lightboxClose = document.getElementById('lightbox-close');
-
+const navOverlay = document.getElementById('navOverlay');
 // ==================== NAVBAR SCROLL ====================
 let lastScrollY = 0;
 
@@ -36,6 +36,7 @@ if (hamburger && navLinks) {
     hamburger.addEventListener('click', () => {
         hamburger.classList.toggle('active');
         navLinks.classList.toggle('active');
+        if (navOverlay) navOverlay.classList.toggle('active');
         document.body.style.overflow =
             navLinks.classList.contains('active') ? 'hidden' : '';
     });
@@ -46,9 +47,20 @@ navLinks.querySelectorAll('.nav-link').forEach(link => {
     link.addEventListener('click', () => {
         hamburger.classList.remove('active');
         navLinks.classList.remove('active');
+        if (navOverlay) navOverlay.classList.remove('active');
         document.body.style.overflow = '';
     });
 });
+
+// Close mobile menu on overlay click
+if (navOverlay) {
+    navOverlay.addEventListener('click', () => {
+        hamburger.classList.remove('active');
+        navLinks.classList.remove('active');
+        navOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+    });
+}
 
 // ==================== ACTIVE NAV LINK ====================
 function updateActiveLink() {
@@ -312,47 +324,42 @@ if (enquiryForm) {
         btnLoading.style.display = 'inline-flex';
 
         try {
-            const response = await fetch('/api/contact', {
+            // Attempt to send to backend (optional, do not block on failure)
+            fetch('/api/contact', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, phone, email, eventType, eventDate, message })
-            });
+            }).catch(e => console.log('Backend optional, proceeding to WhatsApp.'));
 
-            const data = await response.json();
+            // Construct WhatsApp Message
+            const myWhatsAppNumber = "919849141451"; // Zahid Tent House WhatsApp Number (with country code)
 
-            if (data.success) {
-                // Construct WhatsApp Message
-                const myWhatsAppNumber = "919849141451"; // Zahid Tent House WhatsApp Number (with country code)
+            let waMessage = `*New Enquiry - Zahid Tent Decorators* 🎪\n\n`;
+            waMessage += `*Name:* ${name}\n`;
+            waMessage += `*Phone:* ${phone}\n`;
+            if (email) waMessage += `*Email:* ${email}\n`;
+            waMessage += `*Event Type:* ${eventType}\n`;
+            if (eventDate) waMessage += `*Event Date:* ${eventDate}\n`;
+            if (message) waMessage += `\n*Message:*\n${message}`;
 
-                let waMessage = `*New Enquiry - Zahid Tent Decorators* 🎪\n\n`;
-                waMessage += `*Name:* ${name}\n`;
-                waMessage += `*Phone:* ${phone}\n`;
-                if (email) waMessage += `*Email:* ${email}\n`;
-                waMessage += `*Event Type:* ${eventType}\n`;
-                if (eventDate) waMessage += `*Event Date:* ${eventDate}\n`;
-                if (message) waMessage += `\n*Message:*\n${message}`;
+            // Encode for URL
+            const encodedMessage = encodeURIComponent(waMessage);
+            const whatsappUrl = `https://wa.me/${myWhatsAppNumber}?text=${encodedMessage}`;
 
-                // Encode for URL
-                const encodedMessage = encodeURIComponent(waMessage);
-                const whatsappUrl = `https://wa.me/${myWhatsAppNumber}?text=${encodedMessage}`;
+            // Show success toast
+            showToast('success', 'Redirecting to WhatsApp...', 'Opening WhatsApp to send your enquiry.');
 
-                // Show success toast
-                showToast('success', 'Redirecting to WhatsApp...', 'Opening WhatsApp to send your enquiry.');
+            // Reset form
+            enquiryForm.reset();
 
-                // Reset form
-                enquiryForm.reset();
+            // Open WhatsApp in a new tab after a brief delay
+            setTimeout(() => {
+                window.open(whatsappUrl, '_blank');
+            }, 800);
 
-                // Open WhatsApp in a new tab after a brief delay so they see the toast
-                setTimeout(() => {
-                    window.open(whatsappUrl, '_blank');
-                }, 1000);
-
-            } else {
-                showToast('error', 'Submission Failed', data.error || 'Please try again or call us directly.');
-            }
         } catch (error) {
             console.error('Form submission error:', error);
-            showToast('error', 'Connection Error', 'Could not connect to server. Please try calling us at 098491 41451.');
+            showToast('error', 'Error', 'Could not process request. Please try calling us at 098491 41451.');
         } finally {
             submitBtn.disabled = false;
             btnLabel.style.display = 'inline';
@@ -379,19 +386,19 @@ tiltElements.forEach(el => {
         const rect = el.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
-        
+
         const centerX = rect.width / 2;
         const centerY = rect.height / 2;
-        
+
         const rotateX = ((y - centerY) / centerY) * -10; // Max tilt 10deg
         const rotateY = ((x - centerX) / centerX) * 10;
-        
+
         el.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
         el.style.transition = 'transform 0.1s ease-out, box-shadow 0.1s ease-out';
         el.style.zIndex = '10';
         el.style.boxShadow = '0 20px 40px rgba(106, 27, 26, 0.2)';
     });
-    
+
     el.addEventListener('mouseleave', () => {
         el.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
         el.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.5s cubic-bezier(0.25, 1, 0.5, 1)';

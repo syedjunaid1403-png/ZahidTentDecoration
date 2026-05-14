@@ -1704,18 +1704,37 @@ h4 {
         padding: 70px 0;
     }
 
+    .nav-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        z-index: 999;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
+    .nav-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
     .nav-links {
         position: fixed;
         top: 0;
         right: -100%;
-        width: 280px;
+        width: 300px;
         height: 100vh;
-        background: var(--bg);
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
         flex-direction: column;
         padding: 100px 32px 32px;
-        gap: 4px;
-        box-shadow: var(--shadow-xl);
-        transition: right var(--transition);
+        gap: 8px;
+        box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+        transition: right 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         z-index: 1000;
     }
 
@@ -1723,17 +1742,55 @@ h4 {
         right: 0;
     }
 
+    .nav-links li {
+        opacity: 0;
+        transform: translateX(20px);
+        transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .nav-links.active li {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .nav-links.active li:nth-child(1) {
+        transition-delay: 0.1s;
+    }
+
+    .nav-links.active li:nth-child(2) {
+        transition-delay: 0.15s;
+    }
+
+    .nav-links.active li:nth-child(3) {
+        transition-delay: 0.2s;
+    }
+
+    .nav-links.active li:nth-child(4) {
+        transition-delay: 0.25s;
+    }
+
+    .nav-links.active li:nth-child(5) {
+        transition-delay: 0.3s;
+    }
+
+    .nav-links.active li:nth-child(6) {
+        transition-delay: 0.35s;
+    }
+
     .nav-links .nav-link {
         color: var(--text) !important;
-        padding: 12px 16px;
-        font-size: 1rem;
+        padding: 14px 20px;
+        font-size: 1.1rem;
+        font-weight: 500;
         border-radius: var(--radius-sm);
+        display: block;
     }
 
     .nav-links .nav-link:hover,
     .nav-links .nav-link.active {
-        background: rgba(106, 27, 26, 0.05);
-        color: var(--primary) !important;
+        background: rgba(212, 175, 55, 0.1);
+        color: var(--gold) !important;
+        padding-left: 28px;
     }
 
     .nav-actions {
