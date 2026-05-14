@@ -1,0 +1,22 @@
+{
+  "name": "zahid-tent-decorators",
+  "version": "1.0.0",
+  "description": "Zahid Tent Decorators - Premium Event Decoration Services in Hanamkonda",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "tent",
+    "decorators",
+    "events",
+    "hanamkonda"
+  ],
+  "author": "Zahid Tent Decorators",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.0"
+  }
+}
