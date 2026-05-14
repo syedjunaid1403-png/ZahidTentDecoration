@@ -32,11 +32,14 @@ function handleNavScroll() {
 window.addEventListener('scroll', handleNavScroll, { passive: true });
 
 // ==================== HAMBURGER MENU ====================
-hamburger.addEventListener('click', () => {
-    hamburger.classList.toggle('active');
-    navLinks.classList.toggle('active');
-    document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : '';
-});
+if (hamburger && navLinks) {
+    hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('active');
+        navLinks.classList.toggle('active');
+        document.body.style.overflow =
+            navLinks.classList.contains('active') ? 'hidden' : '';
+    });
+}
 
 // Close mobile menu on link click
 navLinks.querySelectorAll('.nav-link').forEach(link => {
@@ -156,10 +159,14 @@ galleryItems.forEach(item => {
     });
 });
 
-lightboxClose.addEventListener('click', closeLightbox);
-lightbox.addEventListener('click', (e) => {
-    if (e.target === lightbox) closeLightbox();
-});
+if (lightboxClose) {
+    lightboxClose.addEventListener('click', closeLightbox);
+}
+if (lightbox) {
+    lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) closeLightbox();
+    });
+}
 
 function closeLightbox() {
     lightbox.classList.remove('active');
